@@ -24,9 +24,15 @@ app.use(express.json());
 // 配置会话
 app.use(session({
   secret: process.env.SESSION_SECRET || 'default_secret_key',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // 在生产环境中应设置为true
+  resave: false,          // 不要在每次请求时都重新保存会话
+  saveUninitialized: false, // 不要保存未初始化的会话
+  cookie: {
+    secure: false,       // 在生产环境中应设置为true（需要HTTPS）
+    httpOnly: true,      // 防止客户端JavaScript访问cookie
+    maxAge: 3600000,     // 会话过期时间：1小时
+    sameSite: 'strict'   // 防止跨站请求伪造攻击
+  },
+  rolling: true          // 每次请求时刷新会话过期时间
 }));
 
 // 引入路由
