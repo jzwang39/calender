@@ -1,0 +1,25 @@
+# 环境变量文件
+.env
+
+# Node.js依赖
+node_modules/
+
+# 数据库文件
+database.db
+
+# 上传文件
+public/uploads/
+
+# macOS系统文件
+.DS_Store
+
+# 日志文件
+*.log
+
+# IDE配置文件
+.vscode/
+.idea/
+
+# 备份文件
+*.bak
+*.tmp
