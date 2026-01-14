@@ -3,13 +3,28 @@ const path = require('path');
 
 // 连接数据库
 const dbPath = path.resolve(__dirname, '../database.db');
-const db = new sqlite3.Database(dbPath, (err) => {
+const db = new sqlite3.Database(dbPath, { 
+  timeout: 5000, // 设置数据库操作超时时间为5秒
+  verbose: false // 在生产环境中关闭详细日志
+}, (err) => {
   if (err) {
     console.error('无法连接到数据库:', err.message);
   } else {
     console.log('成功连接到SQLite数据库');
+    
+    // 只在需要时初始化数据库（避免每次启动都执行）
     initializeDatabase();
   }
+});
+
+// 优化数据库连接管理
+db.on('profile', (sql) => {
+  // 在生产环境中可以注释掉此日志
+  // console.log('SQL查询:', sql);
+});
+
+db.on('error', (err) => {
+  console.error('数据库错误:', err.message);
 });
 
 // 初始化数据库表
@@ -26,6 +41,13 @@ function initializeDatabase() {
     )
   `, (err) => {
     if (err) console.error('创建用户表失败:', err.message);
+  });
+  
+  // 为username字段创建索引以提高登录查询速度
+  db.run(`
+    CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)
+  `, (err) => {
+    if (err) console.error('创建用户表索引失败:', err.message);
   });
 
   // 创建预约表
