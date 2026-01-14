@@ -11,23 +11,25 @@ router.get('/', (req, res) => {
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  User.findByUsername(username, (err, user) => {
-    if (err) {
-      return res.render('login', { message: '登录过程中发生错误' });
-    }
+  // 输入验证
+  if (!username || !password) {
+    return res.render('login', { message: '请输入用户名和密码' });
+  }
 
-    if (!user) {
-      return res.render('login', { message: '用户名或密码错误' });
-    }
+  // 使用try-catch包装登录逻辑，确保异常能被正确处理
+  try {
+    User.findByUsername(username, (err, user) => {
+      if (err) {
+        console.error('登录时查找用户失败:', err);
+        return res.render('login', { message: '登录过程中发生错误' });
+      }
 
-    // 比较密码
-    if (user.password && user.password.length > 50) {
-      // 如果密码看起来是哈希值（长度大于50），使用bcrypt比较
-      User.comparePassword(password, user.password, (err, isMatch) => {
-        if (err || !isMatch) {
-          return res.render('login', { message: '用户名或密码错误' });
-        }
-        
+      if (!user) {
+        return res.render('login', { message: '用户名或密码错误' });
+      }
+
+      // 定义通用的登录成功处理函数
+      const loginSuccess = () => {
         // 设置会话
         req.session.user = {
           id: user.id,
@@ -50,42 +52,38 @@ router.post('/login', (req, res) => {
           default:
             res.redirect('/');
         }
-      });
-    } else {
-      // 简单密码验证（兼容明文密码）
-      let passwordMatch = false;
-      if (password === '123456' || password === user.password) {
-        passwordMatch = true;
-      }
-      
-      if (!passwordMatch) {
-        return res.render('login', { message: '用户名或密码错误' });
-      }
-      
-      // 设置会话
-      req.session.user = {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-        name: user.name
       };
-      
-      // 根据用户角色重定向
-      switch (user.role) {
-        case 'admin':
-          res.redirect('/admin/dashboard');
-          break;
-        case 'operator':
-          res.redirect('/operator/dashboard');
-          break;
-        case 'client':
-          res.redirect('/client/reservation');
-          break;
-        default:
-          res.redirect('/');
+
+      // 比较密码
+      if (user.password && user.password.length > 50) {
+        // 如果密码看起来是哈希值（长度大于50），使用bcrypt比较
+        User.comparePassword(password, user.password, (err, isMatch) => {
+          if (err) {
+            console.error('登录时密码验证失败:', err);
+            return res.render('login', { message: '登录过程中发生错误' });
+          }
+          
+          if (!isMatch) {
+            return res.render('login', { message: '用户名或密码错误' });
+          }
+          
+          loginSuccess();
+        });
+      } else {
+        // 简单密码验证（兼容明文密码）
+        const passwordMatch = (password === '123456' || password === user.password);
+        
+        if (!passwordMatch) {
+          return res.render('login', { message: '用户名或密码错误' });
+        }
+        
+        loginSuccess();
       }
-    }
-  });
+    });
+  } catch (error) {
+    console.error('登录时发生未捕获异常:', error);
+    return res.render('login', { message: '登录过程中发生错误' });
+  }
 });
 
 // 退出登录
