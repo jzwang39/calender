@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理关闭时段 - 仓库预约系统</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <h1>仓库预约系统</h1>
+            </div>
+            <div class="header-right">
+                <span class="user-info">欢迎, <%= user.name %> (仓库管理员)</span>
+                <a href="/logout" class="logout-btn">退出登录</a>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <!-- 导航菜单 -->
+            <div class="admin-nav">
+                <a href="/admin/dashboard" class="nav-link">预约管理</a>
+                <a href="/admin/closed-slots" class="nav-link active">关闭时段管理</a>
+            </div>
+            
+            <h2>管理关闭预约时段</h2>
+            
+            <!-- 成功或错误消息 -->
+            <% if (success) { %>
+                <div class="success-message"><%= success %></div>
+            <% } %>
+            
+            <% if (error) { %>
+                <div class="error-message"><%= error %></div>
+            <% } %>
+            
+            <!-- 日历式关闭时段展示 -->
+            <div class="calendar-container">
+                <% dates.forEach(date => { %>
+                    <div class="date-card">
+                        <h3 class="date-title"><%= date %></h3>
+                        <div class="time-slots">
+                            <% timeSlots.forEach(timeSlot => { %> 
+                                <% const slotInfo = closedSlotsMap[date] ? closedSlotsMap[date].find(s => s.time_slot === timeSlot) : null; %>
+                                <% if (slotInfo) { %>
+                                    <!-- 已关闭的时段 -->
+                                    <div class="slot-details-container">
+                                        <form action="/admin/closed-slots/delete/<%= slotInfo.id %>" method="post" class="slot-form">
+                                            <input type="hidden" name="date" value="<%= date %>">
+                                            <input type="hidden" name="time_slot" value="<%= timeSlot %>">
+                                            <button 
+                                                type="submit" 
+                                                class="slot-btn closed" 
+                                            >
+                                                <%= timeSlot %>
+                                                (已关闭)
+                                            </button>
+                                        </form>
+                                        <!-- 已关闭时段的详细信息 -->
+                                        <div class="slot-details">
+                                            <p><strong>原因:</strong> <%= slotInfo.reason || '无' %></p>
+                                            <p><strong>关闭人:</strong> <%= slotInfo.created_by_name %></p>
+                                            <p><strong>时间:</strong> <%= slotInfo.created_at %></p>
+                                        </div>
+                                    </div>
+                                <% } else { %>
+                                    <!-- 可关闭的时段 -->
+                                    <form action="/admin/closed-slots/add" method="post" class="slot-form">
+                                        <input type="hidden" name="date" value="<%= date %>">
+                                        <input type="hidden" name="time_slot" value="<%= timeSlot %>">
+                                        <input type="hidden" name="reason" value="快速关闭">
+                                        <button 
+                                            type="submit" 
+                                            class="slot-btn available" 
+                                            onclick="return confirm('确定要快速关闭该时段吗？');"
+                                        >
+                                            <%= timeSlot %>
+                                            (可关闭)
+                                        </button>
+                                    </form>
+                                <% } %>
+                            <% }); %> 
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+            
+            <!-- 已关闭时段列表（可选，可保留表格展示） -->
+            <div class="closed-slots-container">
+                <h3>已关闭的预约时段列表（未来2周内）</h3>
+                
+                <% if (closedSlots && closedSlots.length > 0) { %> 
+                    <table class="closed-slots-table">
+                        <thead>
+                            <tr>
+                                <th>关闭ID</th>
+                                <th>日期</th>
+                                <th>时间段</th>
+                                <th>关闭原因</th>
+                                <th>关闭人</th>
+                                <th>关闭时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% closedSlots.forEach(slot => { %> 
+                                <tr>
+                                    <td><%= slot.id %></td>
+                                    <td><%= slot.date %></td>
+                                    <td><%= slot.time_slot %></td>
+                                    <td><%= slot.reason || '无' %></td>
+                                    <td><%= slot.created_by_name %></td>
+                                    <td><%= slot.created_at %></td>
+                                </tr>
+                            <% }); %> 
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="no-closed-slots">
+                        <p>暂无关闭的预约时段</p>
+                    </div>
+                <% } %>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // 设置日期选择器的最小值为今天，最大值为2周后
+        const today = new Date().toISOString().split('T')[0];
+        const twoWeeksLater = new Date();
+        twoWeeksLater.setDate(twoWeeksLater.getDate() + 14);
+        const twoWeeksLaterStr = twoWeeksLater.toISOString().split('T')[0];
+        
+        document.getElementById('date').min = today;
+        document.getElementById('date').max = twoWeeksLaterStr;
+    </script>
+</body>
+</html>

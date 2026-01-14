@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仓库预约系统 - 登录</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h2>仓库预约系统</h2>
+            <h3>用户登录</h3>
+            
+            <% if (message) { %>
+                <div class="error-message"><%= message %></div>
+            <% } %>
+            
+            <form action="/login" method="post">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="login-btn">登录</button>
+            </form>
+            
+            <div class="test-info">
+                <p>测试账号信息：</p>
+                <p>仓库管理员: admin / 123456</p>
+                <p>运营人员: operator / 123456</p>
+                <p>客户: client1 / 123456</p>
+                <p>客户: client2 / 123456</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

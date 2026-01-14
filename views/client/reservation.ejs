@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仓库预约 - 仓库预约系统</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/client.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <h1>仓库预约系统</h1>
+            </div>
+            <div class="header-right">
+                <span class="user-info">欢迎, <%= user.name %> (客户)</span>
+                <a href="/change-password" class="change-password-btn">修改密码</a>
+                <a href="/logout" class="logout-btn">退出登录</a>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="reservation-section">
+                <h2>仓库预约</h2>
+                <p>请选择您需要预约的日期和时间段（两周内可预约）</p>
+                
+                <!-- 仓库信息卡牌 -->
+                <div class="warehouse-card">
+                    <h3>仓库信息</h3>
+                    <div class="warehouse-info">
+                        <p><strong>仓库地址:</strong> 上海市浦东新区张江高科技园区博云路2号</p>
+                        <p><strong>联系人电话:</strong> 021-12345678</p>
+                        <p><strong>可服务时间:</strong> 周一至周五 09:00-16:00（周六日不可接受货物）</p>
+                    </div>
+                </div>
+                
+                <!-- 日历视图 -->
+<div class="calendar-view">
+    <h3>两周预约日历</h3>
+    <div class="calendar-grid">
+        <!-- 星期标题 -->
+        <div class="calendar-day header">日</div>
+        <div class="calendar-day header">一</div>
+        <div class="calendar-day header">二</div>
+        <div class="calendar-day header">三</div>
+        <div class="calendar-day header">四</div>
+        <div class="calendar-day header">五</div>
+        <div class="calendar-day header">六</div>
+        
+        <!-- 日历日期 -->
+        <% 
+            // 获取两周内的所有日期，包括周末（用于填充日历网格）
+            const allDates = [];
+            const startDate = new Date();
+            
+            // 找到起始日期所在周的周日
+            const firstDay = new Date(startDate);
+            firstDay.setDate(startDate.getDate() - startDate.getDay());
+            
+            // 生成两周（14天）的日期，加上填充日期共21天
+            for (let i = 0; i < 21; i++) {
+                const date = new Date(firstDay);
+                date.setDate(firstDay.getDate() + i);
+                
+                // 格式化日期
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const formattedDate = year + '-' + month + '-' + day;
+                
+                allDates.push({
+                    date: formattedDate,
+                    day: date.getDate(),
+                    isToday: formattedDate === new Date().toISOString().split('T')[0],
+                    isWeekend: date.getDay() === 0 || date.getDay() === 6,
+                    isInRange: dates.includes(formattedDate)
+                });
+            }
+        %>
+        
+        <% allDates.forEach(dateInfo => { %>            
+            <div class="calendar-day <%= dateInfo.isWeekend ? 'weekend' : '' %> <%= dateInfo.isToday ? 'today' : '' %> <%= !dateInfo.isInRange ? 'outside-range' : '' %>">
+                <div class="day-number"><%= dateInfo.day %></div>
+                
+                <% if (dateInfo.isInRange) { %>
+                    <div class="day-slots">
+                        <% timeSlots.forEach(timeSlot => { %>                            
+                            <% const isBooked = bookedSlots[dateInfo.date] && bookedSlots[dateInfo.date].includes(timeSlot); %>                            
+                        <% const isCancelled = cancelledSlots[dateInfo.date] && cancelledSlots[dateInfo.date].includes(timeSlot); %>                            
+                        <% const isClosed = closedSlots[dateInfo.date] && closedSlots[dateInfo.date].includes(timeSlot); %>                            
+                        <% const isMine = userReservations.some(res => res.date === dateInfo.date && res.time_slot === timeSlot); %>                            
+                        <% const isAvailable = !isBooked && !isCancelled && !isClosed; %>                            
+                            
+                        <% let slotClass = 'available'; %>
+                        <% let slotTitle = timeSlot + ' - 可预约'; %>
+                            
+                        <% if (isClosed) { %>
+                            <% slotClass = 'closed'; %>
+                            <% slotTitle = timeSlot + ' - 已关闭'; %>
+                        <% } else if (isCancelled) { %>
+                            <% slotClass = 'cancelled'; %>
+                            <% slotTitle = timeSlot + ' - 已取消'; %>
+                        <% } else if (isBooked) { %>
+                            <% slotClass = 'booked'; %>
+                            <% slotTitle = timeSlot + ' - 已预约'; %>
+                        <% } %>
+                            
+                            <div 
+                                class="day-slot <%= slotClass %>"
+                                <% if (isAvailable) { %>onclick="openReservationModal('<%= dateInfo.date %>', '<%= timeSlot %>')"<% } %>
+                                title="<%= slotTitle %>"
+                            >
+                                <%= timeSlot %> <!-- 显示完整时间段 -->
+                            </div>
+                        <% }); %>                    </div>
+                <% } %>
+            </div>
+        <% }); %>
+    </div>
+    
+    <!-- 图例 -->
+    <div class="calendar-legend">
+        <div class="legend-item">
+            <span class="legend-color available"></span>
+            <span>可预约</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-color booked"></span>
+            <span>已预约</span>
+        </div>
+        <!-- 移除"我的预约"图例 -->
+        <div class="legend-item">
+            <span class="legend-color cancelled"></span>
+            <span>已取消</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-color closed"></span>
+            <span>已关闭</span>
+        </div>
+    </div>
+</div>
+            </div>
+            
+            <div class="my-reservations">
+                <h2>我的预约</h2>
+                
+                <% if (userReservations && userReservations.length > 0) { %>
+                    <div class="reservations-list">
+                        <% userReservations.forEach(reservation => { %>                            
+                            <div class="reservation-card <%= reservation.status === 'cancelled' ? 'cancelled' : '' %>">
+                                <div class="reservation-info">
+                                    <p><strong>预约日期:</strong> <%= reservation.date %></p>
+                                    <p><strong>时间段:</strong> <%= reservation.time_slot %></p>
+                                    <p><strong>柜号:</strong> <%= reservation.container_number || '未填写' %></p>
+                                    <% if (reservation.packing_list) { %>
+                                    <p><strong>装箱单:</strong> <a href="/uploads/<%= reservation.packing_list %>" target="_blank">查看/下载</a></p>
+                                    <% } else { %>
+                                    <p><strong>装箱单:</strong> 未上传</p>
+                                    <% } %>
+                                    <p><strong>创建时间:</strong> <%= reservation.created_at %></p>
+                                    <p><strong>状态:</strong> <span class="reservation-status <%= reservation.status === 'cancelled' ? 'cancelled' : 'active' %>"><%= reservation.status === 'cancelled' ? '已取消' : '已预约' %></span></p>
+                                </div>
+                                <div class="reservation-actions">
+                                    <% if (reservation.status !== 'cancelled') { %>
+                                        <!-- 取消预约表单 -->
+                                        <form action="/client/reservation/cancel/<%= reservation.id %>" method="post" style="display: inline;">
+                                            <button 
+                                                type="submit" 
+                                                class="cancel-reservation-btn" 
+                                                onclick="return confirm('确定要取消此预约吗？')"
+                                                id="cancelBtn-<%= reservation.id %>"
+                                            >
+                                                取消预约
+                                            </button>
+                                        </form>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% }); %>                    </div>
+                <% } else { %>
+                    <div class="no-reservations">
+                        <p>您还没有任何预约</p>
+                    </div>
+                <% } %>
+            </div>
+        </main>
+        
+        <!-- 预约模态框 -->
+        <div id="reservationModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeReservationModal()">&times;</span>
+                <h2>确认预约</h2>
+                <form action="/client/reservation/create" method="post" enctype="multipart/form-data" class="reservation-form">
+                    <input type="hidden" id="modalDate" name="date">
+                    <input type="hidden" id="modalTimeSlot" name="time_slot">
+                    
+                    <div class="form-group">
+                        <label for="containerNumber">柜号信息:</label>
+                        <input type="text" id="containerNumber" name="container_number" required placeholder="请输入柜号">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="packingList">装箱单文件:</label>
+                        <input type="file" id="packingList" name="packing_list" accept=".doc,.docx,.pdf" required>
+                        <small>支持格式: .doc, .docx, .pdf</small>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="closeReservationModal()">取消</button>
+                        <button type="submit" class="submit-btn">确认预约</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 模态框和取消预约逻辑JavaScript -->
+        <script>
+            // 获取模态框
+            var modal = document.getElementById("reservationModal");
+            
+            // 打开模态框
+            function openReservationModal(date, timeSlot) {
+                document.getElementById("modalDate").value = date;
+                document.getElementById("modalTimeSlot").value = timeSlot;
+                modal.style.display = "block";
+            }
+            
+            // 关闭模态框
+            function closeReservationModal() {
+                modal.style.display = "none";
+            }
+            
+            // 点击模态框外部关闭模态框
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    closeReservationModal();
+                }
+            }
+            
+            // 页面加载完成后执行
+            document.addEventListener('DOMContentLoaded', function() {
+                // 获取当前日期
+                var currentDate = new Date();
+                // 将时间设置为0点，以便准确比较日期
+                currentDate.setHours(0, 0, 0, 0);
+                
+                // 获取所有预约项
+                var reservations = document.querySelectorAll('.reservation-card');
+                
+                reservations.forEach(function(card) {
+                    // 获取预约日期
+                    var dateElement = card.querySelector('p:nth-child(1)');
+                    if (dateElement) {
+                        var dateText = dateElement.textContent;
+                        // 提取日期部分 (格式："预约日期: 2023-12-31")
+                        var reservationDateStr = dateText.substring(6).trim();
+                        var reservationDate = new Date(reservationDateStr);
+                        reservationDate.setHours(0, 0, 0, 0);
+                        
+                        // 计算日期差（以天为单位）
+                        var timeDiff = reservationDate.getTime() - currentDate.getTime();
+                        var dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                        
+                        // 获取取消按钮
+                        var cancelBtn = card.querySelector('.cancel-reservation-btn');
+                        
+                        // 只能取消一天后的预约，第二天的不能取消
+                        if (dayDiff <= 1) {
+                            cancelBtn.style.display = 'none';
+                        } else {
+                            cancelBtn.style.display = 'inline-block';
+                        }
+                    }
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

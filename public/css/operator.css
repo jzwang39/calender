@@ -1,0 +1,395 @@
+.header {
+    background-color: var(--white);
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.header-left h1 {
+    margin: 0;
+    font-size: 28px;
+    color: var(--primary-color);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-info {
+    font-size: 16px;
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.change-password-btn {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 10px rgba(255, 193, 7, 0.3);
+}
+
+.change-password-btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+}
+
+.logout-btn {
+    padding: 10px 20px;
+    background-color: var(--error-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 10px rgba(244, 67, 54, 0.3);
+}
+
+.logout-btn:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+}
+
+.nav-menu {
+    margin-bottom: 30px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
+}
+
+.nav-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 15px;
+    border-bottom: 2px solid var(--medium-gray);
+    flex-wrap: wrap;
+}
+
+.nav-menu ul li a {
+    display: block;
+    padding: 12px 24px;
+    text-decoration: none;
+    color: var(--dark-gray);
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 14px;
+}
+
+.nav-menu ul li a:hover {
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.nav-menu ul li a.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    background-color: rgba(255, 193, 7, 0.1);
+    border-radius: 6px 6px 0 0;
+    box-shadow: 0 -2px 10px rgba(255, 193, 7, 0.2);
+}
+
+.main-content {
+    background-color: var(--white);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    max-width: 1200px;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.main-content:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.main-content h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    color: var(--secondary-color);
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--medium-gray);
+    padding-bottom: 12px;
+}
+
+.reservations-table, .clients-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.reservations-table th, .reservations-table td,
+.clients-table th, .clients-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.reservations-table th, .clients-table th {
+    background-color: var(--primary-color);
+    font-weight: bold;
+    color: var(--secondary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 14px;
+}
+
+.reservations-table tr:hover, .clients-table tr:hover {
+    background-color: rgba(255, 193, 7, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.no-reservations, .no-clients {
+    text-align: center;
+    padding: 60px;
+    color: var(--dark-gray);
+    background-color: var(--light-gray);
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    border: 2px dashed var(--medium-gray);
+}
+
+/* 日历视图样式 */
+.calendar-view {
+    margin-bottom: 40px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.calendar-day {
+    background-color: var(--light-gray);
+    border-radius: 12px;
+    padding: 15px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.calendar-day:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.calendar-day.header {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-weight: bold;
+    text-align: center;
+    padding: 20px 15px;
+    min-height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
+}
+
+.calendar-day.weekend {
+    background-color: #fff9e6;
+    border: 1px solid var(--primary-color);
+}
+
+.calendar-day.today {
+    background-color: #fffbeb;
+    border: 2px solid var(--primary-color);
+}
+
+.calendar-day.outside-range {
+    opacity: 0.5;
+}
+
+.day-number {
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: var(--secondary-color);
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+.day-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    max-height: 100px;
+}
+
+.day-slot {
+    padding: 8px 5px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.4;
+    cursor: default;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.day-slot.available {
+    background-color: var(--success-color);
+    color: white;
+    box-shadow: 0 2px 5px rgba(76, 175, 80, 0.3);
+}
+
+.day-slot.booked {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    box-shadow: 0 2px 5px rgba(255, 193, 7, 0.3);
+}
+
+.day-slot.cancelled {
+    background-color: var(--medium-gray);
+    color: white;
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+/* 日历图例 */
+.calendar-legend {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 20px;
+    background-color: var(--light-gray);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--dark-gray);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    display: inline-block;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.legend-color.available {
+    background-color: var(--success-color);
+}
+
+.legend-color.booked {
+    background-color: var(--primary-color);
+}
+
+.legend-color.cancelled {
+    background-color: #9E9E9E;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .nav-menu ul {
+        flex-direction: column;
+        border-bottom: none;
+    }
+    
+    .nav-menu ul li a {
+        border-bottom: none;
+        border-left: 2px solid transparent;
+    }
+    
+    .nav-menu ul li a.active {
+        border-bottom-color: transparent;
+        border-left-color: #2196f3;
+    }
+    
+    .reservations-table, .clients-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    /* 日历视图响应式调整 */
+    .calendar-grid {
+        gap: 5px;
+    }
+    
+    .calendar-day {
+        padding: 5px;
+        min-height: 80px;
+    }
+    
+    .day-slots {
+        max-height: 60px;
+    }
+    
+    .day-slot {
+        padding: 3px;
+        font-size: 10px;
+    }
+    
+    .calendar-legend {
+        gap: 10px;
+    }
+    
+    .legend-item {
+        font-size: 12px;
+    }
+}

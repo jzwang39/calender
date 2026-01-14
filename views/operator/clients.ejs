@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户管理 - 仓库预约系统</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/operator.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <h1>仓库预约系统</h1>
+            </div>
+            <div class="header-right">
+                <span class="user-info">欢迎, <%= user.name %> (运营人员)</span>
+                <a href="/logout" class="logout-btn">退出登录</a>
+            </div>
+        </header>
+        
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="/operator/dashboard">预约信息</a></li>
+                <li><a href="/operator/clients" class="active">客户管理</a></li>
+            </ul>
+        </nav>
+        
+        <main class="main-content">
+            <h2>客户信息</h2>
+            
+            <div class="clients-container">
+                <% if (clients && clients.length > 0) { %>
+                    <table class="clients-table">
+                        <thead>
+                            <tr>
+                                <th>客户ID</th>
+                                <th>用户名</th>
+                                <th>联系方式</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% clients.forEach(client => { %>
+                                <tr>
+                                    <td><%= client.id %></td>
+                                    <td><%= client.username %></td>
+                                    <td><%= client.contact %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="no-clients">
+                        <p>暂无客户信息</p>
+                    </div>
+                <% } %>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

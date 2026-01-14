@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仓库管理员 - 仓库预约系统</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <h1>仓库预约系统</h1>
+            </div>
+            <div class="header-right">
+                <span class="user-info">欢迎, <%= user.name %> (仓库管理员)</span>
+                <a href="/change-password" class="change-password-btn">修改密码</a>
+                <a href="/logout" class="logout-btn">退出登录</a>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <!-- 导航菜单 -->
+            <div class="admin-nav">
+                <a href="/admin/dashboard" class="nav-link active">预约管理</a>
+                <a href="/admin/closed-slots" class="nav-link">关闭时段管理</a>
+            </div>
+            
+            <h2>客户预约信息</h2>
+            
+            <div class="reservations-container">
+                <% if (reservations && reservations.length > 0) { %>
+                    <table class="reservations-table">
+                        <thead>
+                            <tr>
+                                <th>预约ID</th>
+                                <th>预约日期</th>
+                                <th>时间段</th>
+                                <th>柜号</th>
+                                <th>装箱单</th>
+                                <th>创建时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% reservations.forEach(reservation => { %>
+                                <tr>
+                                    <td><%= reservation.id %></td>
+                                    <td><%= reservation.date %></td>
+                                    <td><%= reservation.time_slot %></td>
+                                    <td><%= reservation.container_number || '未填写' %></td>
+                                    <% if (reservation.packing_list) { %>
+                                    <td><a href="/uploads/<%= reservation.packing_list %>" target="_blank">查看/下载</a></td>
+                                    <% } else { %>
+                                    <td>未上传</td>
+                                    <% } %>
+                                    <td><%= reservation.created_at %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="no-reservations">
+                        <p>暂无客户预约信息</p>
+                    </div>
+                <% } %>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
